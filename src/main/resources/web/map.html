@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+
+<head>
+    <meta charset="utf-8">
+    <link rel="shortcut icon" type="image/svg" href="/favicon.svg"/>
+    <title>Position Logger Example UI</title>
+
+    <!-- LeafletJS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+          integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+          crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+            integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+            crossorigin=""></script>
+
+    <!-- Page code -->
+    <link rel="stylesheet" href="map.css">
+    <script src="map.js"></script>
+
+</head>
+
+<body>
+<div id="wrapper">
+    <div id="map_container"></div>
+    <nav>
+        <section>
+            <h1>Users</h1>
+            <ul id="user_list"></ul>
+        </section>
+        <section>
+            <h1>New User</h1>
+            <label for="new_user_id">User ID: </label><input id="new_user_id" type="number" value=""/>
+            <input id="save_new_user" class="button" type="button" value="Create User">
+            <input id="clear_new_user" class="button" type="button" value="Clear Edits">
+
+            <p>
+                Double-click the map to add new points to the track, then save to a user using the above buttons.
+            </p>
+        </section>
+    </nav>
+</div>
+</body>
+
+</html>

@@ -1,0 +1,82 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "de.unia.gvs.grpc";
+option java_outer_classname = "PositionLogProto";
+option objc_class_prefix = "PLOG";
+
+package de.unia.gvs.gprc;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+message Coordinate {
+    // Latitude in degrees, north positive
+    double latitude = 1;
+
+    // Longitude in degrees, east positive
+    double longitude = 2;
+
+    // Altitude above mean sea level in meters
+    double altitude = 3;
+
+    // Timestamp along a track
+    google.protobuf.Timestamp timestamp = 4;
+}
+
+message PointsRequest {
+    uint32 user_id = 1;
+}
+
+message LogPositionRequest {
+    uint32 user_id = 1;
+    repeated Coordinate points = 2;
+}
+
+message ListUsersRequest {
+}
+message ListUsersReply {
+    repeated uint32 users_ids = 1;
+}
+
+message LengthRequest {
+    // Required. ID of the user whose track whose track should be returned
+    uint32 user_id = 1;
+}
+message LengthReply {
+    // Length of the track in meters
+    double length = 1;
+
+    // Number of points in the track
+    uint32 num_points = 2;
+}
+
+message DeleteUserRequest {
+    // Required. ID of the user to delete
+    uint32 user_id = 1;
+}
+
+/// --------------------- gPRC service definition ---------------------
+
+// A position logging service to store tracks for multiple users
+service PositionLogService {
+    // Returns a list of all users
+    rpc ListUsers (ListUsersRequest) returns (ListUsersReply) {
+    }
+
+    // Delete a single user
+    rpc DeleteUser (DeleteUserRequest) returns (google.protobuf.Empty) {
+    }
+
+    // Add points to a user's track, creating the user if necessary
+    rpc LogPosition (LogPositionRequest) returns (google.protobuf.Empty) {
+    }
+
+    // Return all points in a user's track
+    rpc GetPoints (PointsRequest) returns (stream Coordinate) {
+    }
+
+    // Return the overall track length of a user
+    rpc GetTrackLength (LengthRequest) returns (LengthReply) {
+    }
+}

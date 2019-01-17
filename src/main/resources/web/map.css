@@ -1,0 +1,67 @@
+body {
+    font-family: sans-serif;
+}
+
+a {
+    text-decoration: none;
+    color: rgb(0, 69, 134);
+}
+
+#wrapper {
+    display: grid;
+    grid-template-columns: 4fr 1fr;
+    grid-gap: 16px;
+
+    width: 1024px;
+    height: 600px;
+
+    margin: 2em auto;
+}
+
+#map_container {
+    height: 100%;
+}
+
+#user_list {
+    width: 100%;
+    padding: 0;
+}
+
+h1 {
+    margin-top: 0;
+}
+
+#user_list li {
+    list-style-type: none;
+
+    padding: 4px;
+    margin: 0.5em 0;
+
+    font-weight: bold;
+}
+
+#user_list li a.delete {
+    float: right;
+}
+
+#user_list li:nth-child(2n) {
+    background-color: #eeeeee;
+}
+
+#user_list li:nth-child(2n+1) {
+    background-color: #f5f5f5;
+}
+
+nav section {
+    margin-bottom: 32px;
+}
+
+#new_user_id {
+    width: 3em;
+}
+
+.button {
+    width: 96px;
+    height: 24px;
+    margin-top: 16px;
+}
