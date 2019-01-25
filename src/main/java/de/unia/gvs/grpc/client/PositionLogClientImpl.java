@@ -3,6 +3,7 @@ package de.unia.gvs.grpc.client;
 import de.unia.gvs.grpc.Coordinate;
 import de.unia.gvs.grpc.DeleteUserRequest;
 import de.unia.gvs.grpc.LengthReply;
+import de.unia.gvs.grpc.LengthRequest;
 import de.unia.gvs.grpc.ListUsersRequest;
 import de.unia.gvs.grpc.LogPositionRequest;
 import de.unia.gvs.grpc.LogPositionRequestOrBuilder;
@@ -24,6 +25,7 @@ public class PositionLogClientImpl implements PositionLogClient {
     private PositionLogServiceGrpc.PositionLogServiceBlockingStub stub;
 
     public PositionLogClientImpl(ManagedChannel channel) {
+        stub = PositionLogServiceGrpc.newBlockingStub(channel);
     }
 
     @Override
@@ -49,13 +51,23 @@ public class PositionLogClientImpl implements PositionLogClient {
 
     @Override
     public void logPoints(LogPositionRequest request) {
-        if(!listUsers().contains(new Integer(request.getUserId())));
-            
+        /*boolean b = true;
+        for(Integer integer:listUsers()){
+        if(integer.intValue() == ( request.getUserId()))
+        {b = false;
+            break;}
+        }
+        if(b)
+        {
+
+            }
+*/
         stub.logPosition(request);
     }
 
     @Override
     public LengthReply getTrackLength(int userId) {
-        return LengthReply.getDefaultInstance();
+        LengthRequest.Builder builder = LengthRequest.newBuilder().setUserId(userId);
+        return stub.getTrackLength(builder.build());
     }
 }

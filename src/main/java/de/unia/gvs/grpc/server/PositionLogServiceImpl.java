@@ -1,5 +1,6 @@
 package de.unia.gvs.grpc.server;
 
+import com.google.api.Advice.Builder;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import com.google.protobuf.Empty;
@@ -17,6 +18,10 @@ class PositionLogServiceImpl extends PositionLogServiceGrpc.PositionLogServiceIm
 
     @Override
     public void listUsers(ListUsersRequest request, StreamObserver<ListUsersReply> responseObserver) {
+
+        ListUsersReply.Builder builder = ListUsersReply.newBuilder().addAllUsersIds(points.keySet());
+        ListUsersReply listUsersReply = builder.build();
+        responseObserver.onNext(listUsersReply);
     }
 
     @Override
