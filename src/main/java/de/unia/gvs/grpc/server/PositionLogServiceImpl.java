@@ -27,18 +27,21 @@ class PositionLogServiceImpl extends PositionLogServiceGrpc.PositionLogServiceIm
         ListUsersReply.Builder builder = ListUsersReply.newBuilder().addAllUsersIds(points.keySet());
         ListUsersReply listUsersReply = builder.build();
         responseObserver.onNext(listUsersReply);
+        responseObserver.onCompleted();
     }
 
     @Override
     public void deleteUser(DeleteUserRequest request, StreamObserver<Empty> responseObserver) {
         points.removeAll(request.getUserId());
         responseObserver.onNext(Empty.getDefaultInstance());
+        responseObserver.onCompleted();
     }
 
     @Override
     public void logPosition(LogPositionRequest request, StreamObserver<Empty> responseObserver) {
         points.putAll(request.getUserId(), request.getPointsList());
         responseObserver.onNext(Empty.getDefaultInstance());
+        responseObserver.onCompleted();
     }
 
     @Override
@@ -46,6 +49,7 @@ class PositionLogServiceImpl extends PositionLogServiceGrpc.PositionLogServiceIm
         for(Coordinate coor : points.get(request.getUserId())) {
             responseObserver.onNext(coor);
         }
+        responseObserver.onCompleted();
 
     }
 
@@ -67,5 +71,6 @@ class PositionLogServiceImpl extends PositionLogServiceGrpc.PositionLogServiceIm
         LengthReply.Builder builder = LengthReply.newBuilder().setLength(distance);
         LengthReply lengthReply = builder.build();
         responseObserver.onNext(lengthReply);
+        responseObserver.onCompleted();
     }
 }
