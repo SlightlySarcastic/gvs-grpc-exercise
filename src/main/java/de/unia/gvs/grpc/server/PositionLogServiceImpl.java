@@ -1,11 +1,15 @@
 package de.unia.gvs.grpc.server;
 
+import java.util.Collection;
+
 import com.google.api.Advice.Builder;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import com.google.protobuf.Empty;
 import de.unia.gvs.grpc.*;
 import io.grpc.stub.StreamObserver;
+import net.sf.geographiclib.Geodesic;
+import net.sf.geographiclib.GeodesicData;
 
 /**
  * Implementation of the gPRC Position Log service.
@@ -18,7 +22,6 @@ class PositionLogServiceImpl extends PositionLogServiceGrpc.PositionLogServiceIm
 
     @Override
     public void listUsers(ListUsersRequest request, StreamObserver<ListUsersReply> responseObserver) {
-
         ListUsersReply.Builder builder = ListUsersReply.newBuilder().addAllUsersIds(points.keySet());
         ListUsersReply listUsersReply = builder.build();
         responseObserver.onNext(listUsersReply);
@@ -26,17 +29,38 @@ class PositionLogServiceImpl extends PositionLogServiceGrpc.PositionLogServiceIm
 
     @Override
     public void deleteUser(DeleteUserRequest request, StreamObserver<Empty> responseObserver) {
+        points.removeAll(request.getUserId());
+        responseObserver.onNext(Empty.getDefaultInstance());
     }
 
     @Override
     public void logPosition(LogPositionRequest request, StreamObserver<Empty> responseObserver) {
+        points.putAll(request.getUserId(), request.getPointsList());
+        responseObserver.onNext(Empty.getDefaultInstance());
     }
 
     @Override
     public void getPoints(PointsRequest request, StreamObserver<Coordinate> responseObserver) {
+        responseObserver.onNext(points.get(request.getUserId());
+
     }
 
     @Override
     public void getTrackLength(LengthRequest request, StreamObserver<LengthReply> responseObserver) {
+        double distance = 0;
+        //Collection<Coordinate> points = this.points.values();
+        for (int i = 0; i < points.size() - 1; ++i) {
+            final Coordinate start = points.get(i);
+            final Coordinate end = points.get(i + 1);
+            final GeodesicData data =
+                Geodesic.WGS84.Inverse(start.getLatitude(),
+                start.getLongitude(), end.getLatitude(),
+                end.getLongitude());
+            // s12 field is distance in meters
+            distance += data.s12;
+        }
+        LengthReply.Builder builder = LengthReply.newBuilder().setLength(distance);
+        LengthReply lengthReply = builder.build();
+        responseObserver.onNext(lengthReply);
     }
 }
