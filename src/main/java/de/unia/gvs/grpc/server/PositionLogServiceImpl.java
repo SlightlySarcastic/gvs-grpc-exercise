@@ -1,6 +1,8 @@
 package de.unia.gvs.grpc.server;
 
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 import com.google.api.Advice.Builder;
 import com.google.common.collect.Multimap;
@@ -41,14 +43,17 @@ class PositionLogServiceImpl extends PositionLogServiceGrpc.PositionLogServiceIm
 
     @Override
     public void getPoints(PointsRequest request, StreamObserver<Coordinate> responseObserver) {
-        responseObserver.onNext(points.get(request.getUserId());
+        for(Coordinate coor : points.get(request.getUserId())) {
+            responseObserver.onNext(coor);
+        }
 
     }
 
     @Override
     public void getTrackLength(LengthRequest request, StreamObserver<LengthReply> responseObserver) {
+        List<Coordinate> points = (List<Coordinate>) this.points.get(request.getUserId());
         double distance = 0;
-        //Collection<Coordinate> points = this.points.values();
+        //Die for Schleife ist theoretisch aus dem Skript, ich musste sie aber abändern, damit sie geht.
         for (int i = 0; i < points.size() - 1; ++i) {
             final Coordinate start = points.get(i);
             final Coordinate end = points.get(i + 1);
