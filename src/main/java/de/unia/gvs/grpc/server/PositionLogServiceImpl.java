@@ -9,6 +9,8 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import com.google.protobuf.Empty;
 import de.unia.gvs.grpc.*;
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import net.sf.geographiclib.Geodesic;
 import net.sf.geographiclib.GeodesicData;
@@ -32,6 +34,11 @@ class PositionLogServiceImpl extends PositionLogServiceGrpc.PositionLogServiceIm
 
     @Override
     public void deleteUser(DeleteUserRequest request, StreamObserver<Empty> responseObserver) {
+        if(points.get(request.getUserId()).size()==0)
+        {
+           responseObserver.onError(new StatusRuntimeException(Status.NOT_FOUND));
+           return;
+        }
         points.removeAll(request.getUserId());
         responseObserver.onNext(Empty.getDefaultInstance());
         responseObserver.onCompleted();
@@ -46,6 +53,11 @@ class PositionLogServiceImpl extends PositionLogServiceGrpc.PositionLogServiceIm
 
     @Override
     public void getPoints(PointsRequest request, StreamObserver<Coordinate> responseObserver) {
+        if(points.get(request.getUserId()).size()==0)
+        {
+           responseObserver.onError(new StatusRuntimeException(Status.NOT_FOUND));
+           return;
+        }
         for(Coordinate coor : points.get(request.getUserId())) {
             responseObserver.onNext(coor);
         }
@@ -56,6 +68,12 @@ class PositionLogServiceImpl extends PositionLogServiceGrpc.PositionLogServiceIm
     @Override
     public void getTrackLength(LengthRequest request, StreamObserver<LengthReply> responseObserver) {
         List<Coordinate> points = (List<Coordinate>) this.points.get(request.getUserId());
+        if(points.size()==0)
+        {
+            responseObserver.onError(new StatusRuntimeException(Status.NOT_FOUND));
+            return;
+        }
+
         double distance = 0;
         //Die for Schleife ist theoretisch aus dem Skript, ich musste sie aber abändern, damit sie geht.
         for (int i = 0; i < points.size() - 1; ++i) {
@@ -68,7 +86,7 @@ class PositionLogServiceImpl extends PositionLogServiceGrpc.PositionLogServiceIm
             // s12 field is distance in meters
             distance += data.s12;
         }
-        LengthReply.Builder builder = LengthReply.newBuilder().setLength(distance);
+        LengthReply.Builder builder = LengthReply.newBuilder().setLength(distance).setNumPoints(points.size());
         LengthReply lengthReply = builder.build();
         responseObserver.onNext(lengthReply);
         responseObserver.onCompleted();
