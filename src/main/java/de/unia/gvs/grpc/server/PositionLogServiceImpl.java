@@ -75,7 +75,6 @@ class PositionLogServiceImpl extends PositionLogServiceGrpc.PositionLogServiceIm
         }
 
         double distance = 0;
-        //Die for Schleife ist theoretisch aus dem Skript, ich musste sie aber abändern, damit sie geht.
         for (int i = 0; i < points.size() - 1; ++i) {
             final Coordinate start = points.get(i);
             final Coordinate end = points.get(i + 1);
